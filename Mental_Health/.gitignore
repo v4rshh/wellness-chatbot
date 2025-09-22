@@ -1,0 +1,26 @@
+# Node.js / frontend
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.env
+frontend/.DS_Store
+
+# Backend (Node.js example)
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/.DS_Store
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE/editor files
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
