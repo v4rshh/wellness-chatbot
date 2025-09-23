@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* in index.css or globals.css */
+:root {
+  --pastel-blue: #a7c7e7;
+}
+/* index.css */
+.hero-bg {
+  background: linear-gradient(135deg, #a7c7e7 0%, #e6f0fa 100%);
+  /* or use an image */
+  /* background: url('/your-image.png') no-repeat center center/cover; */
+}
+:root {
+  --soft-lavender: #e6e6fa; /* light lavender */
+   --pastel-green: #9ed2a4;  
+}
