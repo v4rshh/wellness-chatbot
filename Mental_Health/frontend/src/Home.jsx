@@ -31,7 +31,6 @@ const Home = () => {
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/">Home</Link>
-            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/phq9">PHQ-9</Link>
             <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/resources">Resources</Link>
             <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/counselors">Counsellors</Link>
             <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/dashboard">Dashboard</Link>
@@ -69,7 +68,7 @@ const Home = () => {
                   We're here for you, every step of the way.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <Link className="inline-block px-8 py-3 bg-[var(--pastel-blue)] text-white font-semibold rounded-full shadow-lg hover:bg-[#96b9d8] transition-colors duration-300" to="/phq9">Take a Quick Check-up</Link>
+                  <Link className="inline-block px-8 py-3 bg-[var(--pastel-blue)] text-white font-semibold rounded-full shadow-lg hover:bg-[#96b9d8] transition-colors duration-300" to="/auth">Take a Quick Check-up</Link>
                   <Link className="inline-block px-8 py-3 bg-white text-[var(--pastel-blue)] font-semibold rounded-full border border-[var(--pastel-blue)] hover:bg-gray-50 transition-colors duration-300" to="/resources">Explore Resources</Link>
                 </div>
               </div>

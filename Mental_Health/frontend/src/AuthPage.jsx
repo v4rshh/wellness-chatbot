@@ -20,22 +20,60 @@ const AuthPage = () => {
     setError("");
     setSuccess("");
 
-    let payload = { username, password, role, email };
-
     if (!isLogin && password !== confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
       return;
     }
 
-    // Mock auth: store to localStorage and navigate
-    const user = { username: username || email, role: role || "student", language };
-    localStorage.setItem("mindfulu_user", JSON.stringify(user));
-    setSuccess(isLogin ? "Login successful!" : "Account created successfully!");
-    setLoading(false);
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 500);
+    try {
+      const endpoint = isLogin ? '/api/users/login' : '/api/users/register';
+      const payload = isLogin 
+        ? { email, password }
+        : { username: username || email, email, password, role };
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Authentication failed');
+      }
+
+      if (data.success) {
+        // Store token and user data
+        localStorage.setItem('mindfulu_token', data.token);
+        
+        // Decode JWT to get user ID (simple decode, not verification)
+        const tokenParts = data.token.split('.');
+        const payload = JSON.parse(atob(tokenParts[1]));
+        
+        const user = { 
+          userId: payload.id,
+          username: username || email, 
+          role: role || "student", 
+          language,
+          email 
+        };
+        localStorage.setItem("mindfulu_user", JSON.stringify(user));
+        
+        setSuccess(isLogin ? "Login successful!" : "Account created successfully!");
+        
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 500);
+      }
+    } catch (error) {
+      setError(error.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,32 +98,67 @@ const AuthPage = () => {
             <p className="mb-8 text-center text-[var(--text-secondary)]">
               A safe space for students to find support.
             </p>
+
+            {/* Login/Signup Toggle */}
+            <div className="mb-6 flex w-full rounded-lg bg-gray-100 p-1">
+              <button
+                type="button"
+                onClick={() => setIsLogin(true)}
+                className={`flex-1 rounded-md py-2 px-4 text-sm font-medium transition-colors ${
+                  isLogin 
+                    ? 'bg-white text-[var(--text-primary)] shadow-sm' 
+                    : 'text-gray-500 hover:text-[var(--text-primary)]'
+                }`}
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsLogin(false)}
+                className={`flex-1 rounded-md py-2 px-4 text-sm font-medium transition-colors ${
+                  !isLogin 
+                    ? 'bg-white text-[var(--text-primary)] shadow-sm' 
+                    : 'text-gray-500 hover:text-[var(--text-primary)]'
+                }`}
+              >
+                Sign Up
+              </button>
+            </div>
           </div>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Role select */}
-            <div className="relative">
-              <select
-                className="form-input w-full appearance-none rounded-lg border-[#dcdfe5] bg-white p-4 text-base text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-              >
-                <option value="" disabled>
-                  Select your role
-                </option>
-                <option value="student">Student</option>
-                <option value="counsellor">Counsellor</option>
-                <option value="admin">Admin</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[var(--text-secondary)]">
-                <span className="material-symbols-outlined"> expand_more </span>
+            {/* Role select - Only show in signup mode */}
+            {!isLogin && (
+              <div className="relative">
+               
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[var(--text-secondary)]">
+                  <span className="material-symbols-outlined">expand_more</span>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Username - Only show in signup mode */}
+            {!isLogin && (
+              <div>
+                <label className="sr-only" htmlFor="username">
+                  Username (Optional)
+                </label>
+                <input
+                  autoComplete="username"
+                  className="form-input block w-full rounded-lg border-[#dcdfe5] bg-white p-4 text-base text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                  id="username"
+                  name="username"
+                  placeholder="Username (optional - will use email if empty)"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+            )}
 
             {/* Email */}
             <div>
               <label className="sr-only" htmlFor="email">
-                Email, College ID, or Alias
+                {isLogin ? "Email" : "Email Address"}
               </label>
               <input
                 autoComplete="email"

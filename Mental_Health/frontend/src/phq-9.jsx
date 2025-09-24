@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 const PHQ9Page = () => {
   const [answers, setAnswers] = useState(Array(9).fill(null));
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const questions = [
@@ -25,6 +25,61 @@ const PHQ9Page = () => {
     setAnswers(updated);
   };
 
+  const submitAssessment = async (score, responses) => {
+    setLoading(true);
+    
+    try {
+      // Get user data from localStorage
+      const userData = JSON.parse(localStorage.getItem("mindfulu_user") || "{}");
+      const email = userData.email;
+      const userId = userData.userId; // You'll need to store this during login
+
+      if (!email || !userId) {
+        throw new Error("User not logged in properly");
+      }
+
+      const payload = {
+        email,
+        userId,
+        responses: responses.map((answer, index) => ({
+          question: questions[index],
+          answer,
+        })),
+        totalScore: score,
+      };
+
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/forms/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save assessment');
+      }
+
+      // Navigate to results with saved data
+      navigate("/result", { 
+        state: { 
+          score,
+          responseId: data.data.id,
+          severity: data.data.severity 
+        } 
+      });
+    } catch (error) {
+      console.error('Error saving assessment:', error);
+      alert('Failed to save assessment: ' + error.message);
+      // Still navigate to results even if save fails
+      navigate("/result", { state: { score } });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const nextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -33,7 +88,7 @@ const PHQ9Page = () => {
     // Submit on last question
     if (answers.every((a) => a !== null)) {
       const score = answers.reduce((sum, a) => sum + (a ?? 0), 0);
-      navigate("/result", { state: { score } });
+      submitAssessment(score, answers);
     }
   };
 
@@ -112,15 +167,16 @@ const PHQ9Page = () => {
             <button
               onClick={prevQuestion}
               className="btn-secondary rounded-lg h-12 px-6 text-base font-bold transition-colors disabled:opacity-50"
-              disabled={currentQuestion === 0}
+              disabled={currentQuestion === 0 || loading}
             >
               Back
             </button>
             <button
               onClick={nextQuestion}
-              className="btn-primary rounded-lg h-12 px-6 text-base font-bold transition-colors"
+              className="btn-primary rounded-lg h-12 px-6 text-base font-bold transition-colors disabled:opacity-50"
+              disabled={loading || answers[currentQuestion] === null}
             >
-              {currentQuestion === questions.length - 1 ? "Submit" : "Next"}
+              {loading ? "Saving..." : currentQuestion === questions.length - 1 ? "Submit" : "Next"}
             </button>
           </div>
         </div>
