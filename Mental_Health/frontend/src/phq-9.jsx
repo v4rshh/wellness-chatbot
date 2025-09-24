@@ -1,152 +1,144 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const questions = [
-  "Little interest or pleasure in doing things",
-  "Feeling down, depressed, or hopeless",
-  "Trouble falling or staying asleep, or sleeping too much",
-  "Feeling tired or having little energy",
-  "Poor appetite or overeating",
-  "Feeling bad about yourself — or that you are a failure",
-  "Trouble concentrating on things, such as reading or watching TV",
-  "Moving or speaking so slowly that others notice",
-  "Thoughts that you would be better off dead or hurting yourself",
-];
 
-const options = [
-  { value: 0, label: "Not at all" },
-  { value: 1, label: "Several days" },
-  { value: 2, label: "More than half the days" },
-  { value: 3, label: "Nearly every day" },
-];
+const PHQ9Page = () => {
+  const [answers, setAnswers] = useState(Array(9).fill(null));
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const navigate = useNavigate();
 
-const PHQ9 = () => {
-  const [answers, setAnswers] = useState(Array(questions.length).fill(null));
-  const [score, setScore] = useState(null);
-  const [error, setError] = useState("");
+  const questions = [
+    "Little interest or pleasure in doing things?",
+    "Feeling down, depressed, or hopeless?",
+    "Trouble falling or staying asleep, or sleeping too much?",
+    "Feeling tired or having little energy?",
+    "Poor appetite or overeating?",
+    "Feeling bad about yourself?",
+    "Trouble concentrating on things?",
+    "Moving or speaking so slowly that others notice?",
+    "Thoughts that you would be better off dead?"
+  ];
 
-  const handleChange = (qIndex, value) => {
-    const newAnswers = [...answers];
-    newAnswers[qIndex] = value;
-    setAnswers(newAnswers);
-    setError(""); // clear error when selecting
+  const handleSelect = (value) => {
+    const updated = [...answers];
+    updated[currentQuestion] = value;
+    setAnswers(updated);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Check if all questions are answered
-    if (answers.includes(null)) {
-      setError("⚠️ Please answer all questions before submitting.");
-      setScore(null);
+  const nextQuestion = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
       return;
     }
-
-    const total = answers.reduce((sum, val) => sum + val, 0);
-    setScore(total);
-    setError(""); // clear error
+    // Submit on last question
+    if (answers.every((a) => a !== null)) {
+      const score = answers.reduce((sum, a) => sum + (a ?? 0), 0);
+      navigate("/result", { state: { score } });
+    }
   };
 
-  const getSeverity = (score) => {
-    if (score <= 4) return { text: "Minimal depression", color: "green" };
-    if (score <= 9) return { text: "Mild depression", color: "yellow" };
-    if (score <= 14) return { text: "Moderate depression", color: "orange" };
-    if (score <= 19) return { text: "Moderately severe depression", color: "red" };
-    return { text: "Severe depression", color: "red" };
+  const prevQuestion = () => {
+    if (currentQuestion > 0) setCurrentQuestion(currentQuestion - 1);
   };
+
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-10">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-3xl">
-        <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">
-          PHQ-9 Questionnaire
-        </h1>
-        <p className="text-center text-gray-600 mb-6">
-          A standard self-assessment tool to evaluate symptoms of depression.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-10">
-          {questions.map((q, i) => (
-            <div key={i} className="border-b pb-8">
-              {/* Progress Indicator */}
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-500">
-                  Question {i + 1} of {questions.length}
-                </span>
-                {answers[i] !== null && (
-                  <span className="text-xs text-blue-600 font-medium">Answered</span>
-                )}
-              </div>
-
-              <p className="font-medium text-gray-800 mb-4">{q}</p>
-
-              {/* Options */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {options.map((opt) => (
-                  <label
-                    key={opt.value}
-                    className={`flex items-center justify-center border rounded-lg py-2 px-3 cursor-pointer transition-all text-sm
-                      ${
-                        answers[i] === opt.value
-                          ? "bg-blue-600 text-white shadow scale-105"
-                          : "bg-gray-50 hover:bg-gray-100 text-gray-700"
-                      }`}
-                  >
-                    <input
-                      type="radio"
-                      name={`q-${i}`}
-                      value={opt.value}
-                      checked={answers[i] === opt.value}
-                      onChange={() => handleChange(i, opt.value)}
-                      className="hidden"
-                    />
-                    {opt.label}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {/* Error Message */}
-          {error && (
-            <p className="text-red-600 text-center font-medium">{error}</p>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 
-                       text-white font-medium text-base shadow hover:opacity-90 transition"
-          >
-            Submit
-          </button>
-        </form>
-
-        {/* Result */}
-        {score !== null && (
-          <div className="mt-10 p-6 rounded-xl border bg-gray-50 text-center shadow-sm">
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Your Result</h2>
-            <p className="text-lg font-semibold text-gray-800">
-              Total Score: <span className="text-blue-600">{score}</span>
-            </p>
-            <span
-              className={`inline-block mt-3 px-4 py-2 rounded-full text-sm font-medium 
-                ${
-                  getSeverity(score).color === "green"
-                    ? "bg-green-100 text-green-800"
-                    : getSeverity(score).color === "yellow"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : getSeverity(score).color === "orange"
-                    ? "bg-orange-100 text-orange-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-            >
-              {getSeverity(score).text}
-            </span>
+    <div className="flex min-h-screen flex-col bg-[var(--secondary-color)]">
+      {/* Header */}
+      <header className="w-full border-b border-[var(--border-color)]">
+        <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
+          <div className="flex items-center gap-3">
+            <svg className="h-6 w-6 text-[var(--primary-color)]" fill="currentColor" viewBox="0 0 48 48">
+              <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16z"></path>
+              <path d="M24 29c-4.41 0-8-3.59-8-8s3.59-8 8-8c1.48 0 2.85.41 4.05 1.11l2.83-2.83C28.98 10.37 26.58 10 24 10c-6.63 0-12 5.37-12 12s5.37 12 12 12c2.58 0 4.98-.83 6.88-2.28l-2.83-2.83C26.85 28.59 25.48 29 24 29z" fillOpacity="0.5"></path>
+            </svg>
+            <h1 className="text-xl font-bold tracking-tight">MindfulU</h1>
           </div>
-        )}
-      </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="flex flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-10">
+        <div className="w-full max-w-xl">
+          {/* Progress */}
+          <div className="mb-8">
+            <div className="flex justify-between mb-2">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Progress</p>
+              <p className="text-sm font-bold text-[var(--text-primary)]">{currentQuestion + 1} / {questions.length}</p>
+            </div>
+            <div className="w-full rounded-full h-2 bg-[var(--progress-bar-bg)]">
+              <div
+                className="h-2 rounded-full bg-[var(--primary-color)] transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Question Card */}
+          <div className="bg-white rounded-lg p-6 sm:p-8 shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2">{questions[currentQuestion]}</h2>
+            <p className="text-sm sm:text-base text-[var(--text-secondary)] mb-6">
+              Over the last 2 weeks, how often have you been bothered by this?
+            </p>
+
+            <div className="space-y-4">
+              {["Not at all", "Several days", "More than half the days", "Nearly every day"].map((label, idx) => (
+                <label
+                  key={idx}
+                  className={`flex items-center gap-4 rounded-lg border border-[var(--border-color)] p-4 cursor-pointer hover:border-[var(--primary-color)] transition-colors ${
+                    answers[currentQuestion] === idx ? "border-[var(--primary-color)] bg-blue-50" : ""
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestion}`}
+                    className="peer hidden"
+                    value={idx}
+                    checked={answers[currentQuestion] === idx}
+                    onChange={() => handleSelect(idx)}
+                  />
+                  <span
+                    className="h-5 w-5 flex-shrink-0 rounded-full border-2 border-[var(--border-color)] peer-checked:border-[var(--primary-color)] peer-checked:bg-blue-50 transition-all"
+                  ></span>
+                  <span className="text-base font-medium text-[var(--text-primary)]">{label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="mt-6 flex justify-between">
+            <button
+              onClick={prevQuestion}
+              className="btn-secondary rounded-lg h-12 px-6 text-base font-bold transition-colors disabled:opacity-50"
+              disabled={currentQuestion === 0}
+            >
+              Back
+            </button>
+            <button
+              onClick={nextQuestion}
+              className="btn-primary rounded-lg h-12 px-6 text-base font-bold transition-colors"
+            >
+              {currentQuestion === questions.length - 1 ? "Submit" : "Next"}
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full py-6 bg-[var(--secondary-color)]">
+        <div className="container mx-auto px-4 text-center text-[var(--text-secondary)]">
+          <div className="flex justify-center gap-4 mb-2 flex-wrap">
+            <a href="#" className="text-sm hover:text-[var(--text-primary)]">Privacy Policy</a>
+            <a href="#" className="text-sm hover:text-[var(--text-primary)]">Terms of Service</a>
+            <a href="#" className="text-sm hover:text-[var(--text-primary)]">Contact</a>
+          </div>
+          <p className="text-sm">© 2024 MindfulU. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
 
-export default PHQ9;
+export default PHQ9Page;

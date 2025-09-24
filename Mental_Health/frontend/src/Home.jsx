@@ -1,15 +1,16 @@
 import React from 'react'
 import "./index.css"
 import Footer from './footer'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
   return (
    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
       <header className="sticky-header w-full px-6 md:px-10 py-4">
         <nav className="flex items-center justify-between">
-          <a
+          <Link
             className="flex items-center gap-2 text-xl font-bold text-[var(--dark-text)]"
-            href="#hero"
+            to="/"
           >
             <svg
               className="h-8 w-8 text-[var(--pastel-blue)]"
@@ -27,32 +28,14 @@ const Home = () => {
               <path d="M12 12a4 4 0 0 1 4-4"></path>
             </svg>
             <span>MindfulU</span>
-          </a>
+          </Link>
           <div className="hidden md:flex items-center gap-8">
-            <a
-              className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors smooth-scroll"
-              href="#hero"
-            >
-              Home
-            </a>
-            <a
-              className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors smooth-scroll"
-              href="#resources"
-            >
-              Resources
-            </a>
-            <a
-              className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors smooth-scroll"
-              href="#community"
-            >
-              Community
-            </a>
-            <a
-              className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors smooth-scroll"
-              href="#about"
-            >
-              About Us
-            </a>
+            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/">Home</Link>
+            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/phq9">PHQ-9</Link>
+            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/resources">Resources</Link>
+            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/counselors">Counsellors</Link>
+            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/dashboard">Dashboard</Link>
+            <Link className="text-sm font-medium text-[var(--light-text)] hover:text-[var(--dark-text)] transition-colors" to="/auth">Login</Link>
           </div>
           <button className="md:hidden">
             <svg
@@ -86,18 +69,8 @@ const Home = () => {
                   We're here for you, every step of the way.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a
-                    className="inline-block px-8 py-3 bg-[var(--pastel-blue)] text-white font-semibold rounded-full shadow-lg hover:bg-[#96b9d8] transition-colors duration-300"
-                    href="#phq-9"
-                  >
-                    Take a Quick Check-up
-                  </a>
-                  <a
-                    className="inline-block px-8 py-3 bg-white text-[var(--pastel-blue)] font-semibold rounded-full border border-[var(--pastel-blue)] hover:bg-gray-50 transition-colors duration-300 smooth-scroll"
-                    href="#resources"
-                  >
-                    Explore Resources
-                  </a>
+                  <Link className="inline-block px-8 py-3 bg-[var(--pastel-blue)] text-white font-semibold rounded-full shadow-lg hover:bg-[#96b9d8] transition-colors duration-300" to="/phq9">Take a Quick Check-up</Link>
+                  <Link className="inline-block px-8 py-3 bg-white text-[var(--pastel-blue)] font-semibold rounded-full border border-[var(--pastel-blue)] hover:bg-gray-50 transition-colors duration-300" to="/resources">Explore Resources</Link>
                 </div>
               </div>
               <div className="flex justify-center">

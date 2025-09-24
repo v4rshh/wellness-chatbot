@@ -16,3 +16,29 @@
   --soft-lavender: #e6e6fa; /* light lavender */
    --pastel-green: #9ed2a4;  
 }
+
+:root {
+  --primary-color: #3b82f6;       /* Blue */
+  --secondary-color: #f1f5f9;     /* Light gray background for toggles */
+  --text-primary: #111827;        /* Dark text */
+  --text-secondary: #6b7280;      /* Gray text */
+}
+
+/* Optional: form input styling if needed */
+.form-input {
+  border: 1px solid #dcdfe5;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+:root {
+  --primary-100: #dbeafe; /* light blue */
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-700: #1d4ed8; /* deep blue */
+}
