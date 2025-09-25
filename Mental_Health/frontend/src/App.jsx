@@ -7,6 +7,7 @@ import AssessmentResult from "./AssessmentResult.jsx";
 import CounselorList from "./CounselorList.jsx";
 import ResourceHub from "./ResourceHub.jsx";
 import Dashboard from "./Dashboard.jsx";
+import Chatbot from "./Chatbot.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/counselors" element={<CounselorList />} />
         <Route path="/resources" element={<ResourceHub />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/chatbot" element={<Chatbot />} />
       </Routes>
     </BrowserRouter>
   );
