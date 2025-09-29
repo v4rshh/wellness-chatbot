@@ -1,0 +1,29 @@
+{
+  "request_stress_relief": {
+    "intent_name": "Stress Relief Exercises",
+    "content": [
+      {
+        "title": "Box Breathing Exercise",
+        "steps": ["Step 1: Breathe in for 4.", "Step 2: Hold for 4.", "Step 3: Breathe out for 4.", "Step 4: Hold for 4."]
+      }
+    ]
+  },
+  "request_motivation": {
+    "intent_name": "Motivational Support",
+    "content": [
+      {
+        "title": "Quote for Today",
+        "text": "The secret of getting ahead is getting started."
+      }
+    ]
+  },
+  "fallback": {
+    "intent_name": "Fallback",
+    "content": [
+      {
+        "title": "I'm not sure I understand",
+        "text": "I can't help with that. Try asking for a stress exercise or motivation."
+      }
+    ]
+  }
+}
