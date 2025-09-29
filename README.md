@@ -1,6 +1,6 @@
 # Wellness-Chatbot
 
-A simple, rule-based chatbot designed to provide support and information on mental wellness topics. Built with Python and Flask, this project utilizes a knowledge base to provide answers to user questions in a conversational manner.
+A simple, rule-based chatbot designed to provide support and information on mental wellness topics. Built with Python and Flask, this project utilizes a knowledge base to provide answers to user questions conversationally.
 
 ---
 
@@ -26,13 +26,13 @@ wellness-chatbot/
 ├── chatbot/
 │   └── (Chatbot-specific scripts and files)
 │
-├── frontend/
-│   └── (HTML, CSS, or JS files for the user interface)
+├── frontend
+│   
 │
 ├── .gitignore
 ├── LICENSE
 ├── app.py                  # Main Flask application file
-└── knowledge_base.json     # The "brain" of the chatbot
+└── intents.json     # The "brain" of the chatbot
 ```
 
 ---
